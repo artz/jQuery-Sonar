@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>jQuery Flickr Explorer</title>
+<style type="text/css">
+body {
+	font: 100% calibri,'lucida sans';
+	width: 720px;
+	background-color:#000;
+}
+#flickr-results ul {
+	margin-left:0;
+	padding-left:0;
+	list-style-type:none;
+}
+#flickr-results li {
+	margin-left:0;
+	padding-left:0;
+	float:left;
+	width:240px;
+	height:200px;
+	background-color:#000;
+	overflow:hidden;
+}
+#flickr-form {
+	background-color: #cF6;
+	padding: 25px 35px;
+	position: fixed;
+	top:25px;
+	right:25px;
+	margin:0;
+}
+p {margin:0;}
+h1 {
+	margin:0;
+	display:none;
+}
+#flickr-submit {
+	display:none;
+}
+#flickr-term {
+	width:200px;
+	padding:6px 12px;
+	font-size:22px;
+	border:2px inset #690;
+}
+</style>
+</head>
+
+<body>
+<form id="flickr-form" action="">
+<h1>jQuery Flickr Explorer</h1>
+<p id="flickr-error">Type a term and press enter.</p>
+<input type="text" value="" id="flickr-term" />
+<input id="flickr-submit" type="button" type="submit" value="Get Images" />
+</form>
+<div id="flickr-results"></div>
+<script type="text/javascript" src="http://o.aolcdn.com/os/aol/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../jquery.sonar.js"></script>
+<script type="text/javascript">
+(function($){
+
+var $flickrTerm = $("#flickr-term"),
+	$flickrError = $("#flickr-error"),
+	$flickrResults = $("#flickr-results");
+
+$("#flickr-form").submit(function(evt){
+								   
+	evt.preventDefault();
+	
+	var term = $flickrTerm.val(),
+		encode = encodeURIComponent, 
+		getFlickrUrl = function( term, perPage, pageNum ) {
+			return "http://api.flickr.com/services/rest/?api_key=d256a8d55ded700d9af3e4f7921c4ca4&format=json&method=flickr.photos.search&per_page=" + perPage + "&page=" + pageNum + "&tags=" + encode(term) + "&jsoncallback=?";
+		},
+		currPage = 1,
+		$flickrPhotos,
+		allPhotos,
+		
+		getNextPage = function(){
+			
+			$.getJSON( getFlickrUrl( term, 15, currPage ), function(json){
+				
+				// Remove sonar event binding from this image.
+				$(this).unbind("scrollin");
+				
+				var photos = json.photos.photo,
+					photosLength = photos.length,
+					photo,
+					i,
+					photoHtml = [];
+	
+//				photoHtml.push('<ul id="flickr-photos">');
+				for ( i = 0; i < 15; i++ ) {
+try {
+					photo = photos[i];
+	
+					photoHtml.push(['<li><img src="http://',
+						'farm', photo.farm,
+						'.static.flickr.com/',
+						photo.server, '/',
+						photo.id, '_',
+						photo.secret,
+						'_m.jpg" /></li>'].join(''));
+} catch (e){};
+				}
+//				photoHtml.push('</ul>');
+
+				photoHtml = photoHtml.join('');
+				
+				$flickrPhotos.append( photoHtml );
+				
+				// Bind sonar to the last photo in the downloaded collection.
+				$(allPhotos[allPhotos.length-1]).bind("scrollin", { distance: 200 }, getNextPage );
+				
+			});
+			
+			currPage++;
+		};
+	
+	if (term) {
+		$flickrResults.empty().append('<ul id="flickr-photos"></ul>');
+		$flickrPhotos = $("#flickr-photos");
+		allPhotos = $flickrPhotos[0].getElementsByTagName("img");
+		getNextPage();
+	} else {
+		$flickrError.html("Please enter a keyword.");
+	}
+
+});
+})(jQuery);
+</script>
+</body>
+</html>
