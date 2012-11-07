@@ -129,7 +129,8 @@ label {
 <p id="sonar-updates-message"></p>
 </div>
 </div>
-<script type="text/javascript" src="http://o.aolcdn.com/os/aol/jquery-1.4.2.min.js"></script>
+<!--<script type="text/javascript" src="http://o.aolcdn.com/os/aol/jquery-1.4.2.min.js"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript" src="../jquery.sonar.js"></script>
 <script type="text/javascript">
 
@@ -148,7 +149,7 @@ $("#box1").bind("scrollin", function(evt){
 $("#box3").bind("scrollin", { full: true }, function(evt){
 	$(this).addClass("detected")
 		.unbind("scrollin");
-		
+
 	$sonarUpdates.html("BOX 3 is fully on screen, removing sonar.");
 });
 
@@ -157,12 +158,12 @@ $("#detect-button").click(function(){
 	var $box2 = $("#box2"),
 		full = $("#detect-full")[0].checked,
 		fully = full ? " fully " : "";
-	
+
 	if ( $box2.sonar( full ) ) {
 		$box2.addClass("detected");
 		$(this).hide();
 		$("#reset-button").show();
-		
+
 		$sonarUpdates.html("BOX 2 is " + fully + "on screen.");
 	} else {
 		$sonarUpdates.html("BOX 2 is not " + fully + "on screen.");
