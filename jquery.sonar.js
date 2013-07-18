@@ -284,7 +284,7 @@ var body = doc.body,
                 // console.log("triggered:" + elem.id);
                 // Trigger the onscreen or offscreen event depending
                 // on the desired event.
-                $(elem).trigger( screenEvent );
+                $(elem).triggerHandler( screenEvent );
 
                 options.tr = 1;
 
@@ -335,7 +335,7 @@ var body = doc.body,
       // Trigger the onscreen event at the next possible cycle.
       // Artz: Ask the jQuery team why I needed to do this.
       setTimeout(function(){
-        $(elem).trigger( screenEvent === offScreenEvent ? offScreenEvent : onScreenEvent );
+        $(elem).triggerHandler( screenEvent === offScreenEvent ? offScreenEvent : onScreenEvent );
       }, 0);
       triggered = 1;
     // Otherwise, add it to the polling queue.
